@@ -1,0 +1,6 @@
+.history/
+.vscode/
+venv/
+__pycache__/
+responses.txt
+results.csv

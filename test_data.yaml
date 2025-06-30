@@ -1,0 +1,179 @@
+test_runs:
+  - name: "function_calling"
+    data:
+      - input: "lets move over to talk to Charlie"
+        expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Charlie'], 'npc_distance': [3.402], 'target_npc_id': ['1231']}}</tool_call>"
+      
+      - input: "lets go and find Alice"
+        expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Alice'], 'npc_distance': [30.402], 'target_npc_id': ['1230']}}</tool_call>"
+      
+      - input: "teleport to David"
+        expected_response: "<tool_call>{'name': 'teleport_npc', 'arguments': {'npc_name': ['David'], 'npc_distance': [6.402], 'target_npc_id': ['1232']}}</tool_call>"
+      
+      - input: "what spells do you know?"
+        expected_response: "<tool_call>{'name': 'list_spells', 'arguments': {'list_spells_mode': ['Firestorm', 'Blinding Light']}}</tool_call>"
+      
+      - input: "go and loot some weapons from the nearby chest"
+        expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'weapons'}}</tool_call>"
+      
+      - input: "go and loot whatever you can find"
+        expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'any'}}</tool_call>"
+      
+      - input: "attack Bob with your sword"
+        expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'npc_name': ['Bob'], 'npc_distance': [1.0], 'target_npc_id': ['20']}}</tool_call>"
+      
+      - input: "attack Alice with your bow"
+        expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'npc_name': ['Alice'], 'npc_distance': [30.402], 'target_npc_id': ['1230']}}</tool_call>"
+      
+      - input: "cast Blinding Light on Bob"
+        expected_response: "<tool_call>{'name': 'npc_use_spell_on_target', 'arguments': {'spell_mode': 'Blinding Light', 'target_npc_id': ['20']}}</tool_call>"
+      
+      # also test for when the model should not return a tool call
+      - input: "tell me what you think about Alice"
+        expected_response: ""
+
+      - input: "tell me about your relationship with David"
+        expected_response: ""
+
+      - input: "where is Bob?"
+        expected_response: ""
+      
+      - input: "what is the weather like?"
+        expected_response: ""
+      
+      - input: "hello"
+        expected_response: ""
+
+# Configuration data
+config:
+  test_iterations: 1
+
+  # Model type - lmstudio, remote
+  model_type: "remote"
+  # model_type: "lmstudio"
+
+  # Model endpoint. Typically "http://127.0.0.1:1234" for LM Studio, or "https://openrouter.ai/api" for OpenRouter
+  model_endpoint: "https://openrouter.ai/api"
+  # model_endpoint: "http://127.0.0.1:1234"
+  
+  # Model list
+  models:
+    # Example Local Gemma 3 models
+    # - "lmstudio-community/gemma-3-12B-it-qat-GGUF/gemma-3-12B-it-QAT-Q4_0.gguf" #7.74gb
+    # - "lmstudio-community/gemma-3-4B-it-qat-GGUF/gemma-3-4B-it-QAT-Q4_0.gguf" # 3.21gb
+    # - "lmstudio-community/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q8_0.gguf" # 4.98gb
+    # - "lmstudio-community/gemma-3-1B-it-QAT-GGUF/gemma-3-1B-it-QAT-Q4_0.gguf"
+
+    # Example Local Llama 3 models
+    # - "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf" #4.92gb
+    # - "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q8_0.gguf"  #8.54gb
+
+    # Example Local Qwen models
+    # - "lmstudio-community/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-Q4_K_M.gguf" #4.68 GB TOOL CALLING
+    # - "Mungert/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-q4_k_l.gguf" # 5.09 GB TOOL CALLING
+    # - "Qwen/Qwen2.5-7B-Instruct-GGUF/qwen2.5-7b-instruct-q8_0-00001-of-00003.gguf" # 8.10 GB TOOL CALLING
+    # - "lmstudio-community/Qwen3-1.7B-GGUF/Qwen3-1.7B-Q8_0.gguf" # 2.17 GB TOOL CALLING
+    # - "art-from-the-machine/Mantella-Skyrim-Llama-3-8B-GGUF/Mantella-Skyrim-Llama-3-8B-Q4_K_M.gguf" #4.92gb
+ 
+    # example openrouter models
+    - "mistralai/mistral-small-3.2-24b-instruct:free"
+    - "google/gemma-3-27b-it:free"
+    # - "google/gemma-3-4b-it:free"
+    # - "google/gemma-3-12b-it:free"
+    # - "google/gemma-3n-e4b-it:free"
+    # - "qwen/qwen3-8b:free"
+    # - "qwen/qwen3-14b:free"
+    # - "qwen/qwen3-32b:free"
+    - "qwen/qwen3-30b-a3b:free"
+    # - "qwen/qwen3-235b-a22b:free"
+    # - "minimax/minimax-m1:extended"
+    # - "moonshotai/kimi-dev-72b:free"
+    # - "deepseek/deepseek-r1-0528-qwen3-8b:free"
+    # - "deepseek/deepseek-r1-0528:free"
+    # - "deepseek/deepseek-chat-v3-0324:free"
+    # - "sarvamai/sarvam-m:free"
+    # - "thudm/glm-z1-32b:free"
+    # - "nvidia/llama-3.3-nemotron-super-49b-v1:free"
+    # - "nvidia/llama-3.1-nemotron-ultra-253b-v1:free"
+    # - "meta-llama/llama-4-maverick:free"
+    # - "meta-llama/llama-4-scout:free"
+
+  # Prompt template
+  prompt_template: |
+    You are a function calling AI model named Skjor. 
+    You are provided with function signatures within <tools> </tools> XML tags. 
+    You may call one or more functions to assist with the user query. 
+    If available tools are not relevant in assisting with user query, just respond in natural conversational language. 
+    Don't make assumptions about what values to plug into functions. 
+    The user might refer to Bob as 'me' or 'I'. 
+    Prioritize `npc_attack_other_npc` if requested to attack or shoot at another NPC; 
+    or `list_spells` if requested to list the spells that a NPC has or knows.; 
+    or `npc_loot_items` if requested to loot, scavenge or collect items; 
+    or `move_character_near_npc` if requested to move or follow; 
+    or `teleport_npc` if requested to move or follow; 
+    or `npc_use_spell_on_target` if requested to use a specific spell..
+    <tools>
+    [{'type': 'function', 'function': {'name': 'npc_attack_other_npc', 
+    'description': 'Use this function to select a target NPC to attack.', 
+    'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
+    'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
+    'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
+    'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
+    'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
+    'required': ['target_npc_id']}}}, 
+    {'type': 'function', 'function': {'name': 'list_spells', 
+    'description': 'Use this function to list the spells of a NPC.', 
+    'parameters': {'type': 'object', 'properties': {'list_spells_mode': {'type': 'array', 
+    'description': 'List of all available spells.', 'items': {'type': 'string'}}}, 
+    'required': ['list_spells_mode']}}}, 
+    {'type': 'function', 'function': {'name': 'npc_loot_items', 
+    'description': "Use this function to loot items. If the type of item to loot is unspecified, then use 'any'.", 
+    'parameters': {'type': 'object', 'properties': {'item_mode': {'type': 'string', 
+    'description': 'The type of item to loot.'}}, 'required': ['item_mode']}}}, 
+    {'type': 'function', 'function': {'name': 'move_character_near_npc', 
+    'description': 'Determine a target NPC for a character to move towards.', 
+    'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
+    'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
+    'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
+    'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
+    'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
+    'required': ['target_npc_id']}}}, 
+    {'type': 'function', 'function': {'name': 'teleport_npc', 
+    'description': 'Determine a target NPC to teleport to.', 
+    'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
+    'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
+    'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
+    'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
+    'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
+    'required': ['target_npc_id']}}}, 
+    {'type': 'function', 'function': {'name': 'npc_use_spell_on_target', 
+    'description': 'Determine a target on which to use a specified spell.', 
+    'parameters': {'type': 'object', 'properties': {'spell_mode': {'type': 'string', 
+    'description': 'The name of a spell.'}, 'target_npc_id': {'type': 'array', 
+    'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
+    'required': ['spell_mode', 'target_npc_id']}}}]
+    </tools>. 
+    For each function call return a JSON object, with the following pydantic model json schema: 
+    <tool_call>
+    {'title': 'FunctionCall', 'type': 'object', 'properties': {'name': {'title': 'Name', 'type': 'string'}, 
+    'arguments': {'title': 'Arguments', 'type': 'object'}}, 'required': ['arguments', 'name']}
+    </tool_call>
+
+  # Data template
+  data_template: |
+    Here are the values for NPC functions that require targets:
+    1. target name: Bob, distance: 1.0, target npc ID: 20
+    2. target name: Alice, distance: 30.402, target npc ID: 1230
+    3. target name: Charlie, distance: 3.402, target npc ID: 1231
+    4. target name: David, distance: 6.402, target npc ID: 1232
+    5. target name: Eve, distance: 2.402, target npc ID: 1233
+    6. target name: , distance: 3.4028234663852886e+38, target npc ID: 0
+    7. target name: , distance: 3.4028234663852886e+38, target npc ID: 0
+    8. target name: , distance: 3.4028234663852886e+38, target npc ID: 0
+    9. target name: , distance: 3.4028234663852886e+38, target npc ID: 0
+    10. target name: , distance: 3.4028234663852886e+38, target npc ID: 0
+    The distances are calculated from Bob's position.
+    Here are the spell(or modes) that the NPC has : 
+    1. Firestorm, 2. Blinding Light
+    Here are the values for loot items functions: 
+    Possible item types to loot: ["any", "weapons", "armor", "junk", "consumables"] 
