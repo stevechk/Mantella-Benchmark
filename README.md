@@ -1,8 +1,11 @@
 # Mantella-Benchmark
-A simple benchmarking tool for benchmarking Large Language Models (LLMs) for use with function calling (also known as 'tool calling') tasks in the Mantella Skyrim/Fallout4 mod.
+A simple benchmarking tool for benchmarking Large Language Models (LLMs) for use with the [Mantella Skyrim/Fallout4 mod.](https://art-from-the-machine.github.io/Mantella/)
 
 
 ## Current Leaderboard
+
+### Function testing
+This test evaluates function calling (also known as tool calling) LLMs.
 
 | Base Model  | Model                                                                                         | Deployment Type | Size (if local) | Average Score (out of 1) | Average Call Time (seconds) | Cost         |
 | ----------- | --------------------------------------------------------------------------------------------- | --------------- | --------------- | ------------------------ | --------------------------- | ------------ |
@@ -30,24 +33,22 @@ Notes:
 - Models format results in different ways (even when instructed to follow a standard). Some reasonable attempts have been made at parsing results before comparing.
 - `test_iterations` is set to 10 to get a good balance of results
 
-## Background
-
 Function calling requires the LLM to understand natural language commands and convert them into structured function calls.
 
 For example, the player might say to an NPC : "go and loot some weapons from the nearby chest". The LLM needs to turn this into the 'npc_loot_items' call, and identify that the player specifically wants 'weapons'. In this case, the expected_response would be: `"<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'weapons'}}</tool_call>"`
 
 This use case typically requires LLMs that have been trained to do this, and correctly format the result.
 
-## Features
+## Benchmark Features
 - **Support either local (LMStudio) or remote models**
-- **Configurable Test Data**: YAML-based configuration for easy test case management (via `test_data.yaml`)
+- **Configurable Test Data**: YAML-based configuration
 - **Performance Metrics**: Scoring and timing analysis
 
 ## Benchmark installation
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/stevechk/Mantella-Benchmark.git
    cd Mantella-Benchmark
    ```
 
@@ -78,7 +79,7 @@ This use case typically requires LLMs that have been trained to do this, and cor
 1. **Install LM Studio**: Download and install [LM Studio](https://lmstudio.ai/)
 2. **Install LM Studio CLI**: Follow the [CLI installation guide](https://docs.lmstudio.ai/cli/)
 3. **Download Models**: Use the LM Studio interface or CLI to download models
-4. **Configure test_data.yaml**:
+4. **Configure tests in yaml**:
    ```yaml
    config:
      model_type: "lmstudio"
@@ -94,7 +95,7 @@ This use case typically requires LLMs that have been trained to do this, and cor
    ```bash
    export OPENROUTER_API_KEY="your-api-key-here"
    ```
-3. **Configure test_data.yaml**:
+3. **Configure tests in yaml**:
    ```yaml
    config:
      model_type: "remote"
@@ -109,32 +110,31 @@ This use case typically requires LLMs that have been trained to do this, and cor
 ### Running the Benchmark
 
 ```bash
-python function_calling_benchmark.py
+python benchmark.py tests/function_test_data.yaml
 ```
 
 The benchmark will:
 1. Load each configured model
-2. Run test cases multiple times (configurable in test_data.yaml via `test_iterations`)
+2. Run test cases multiple times (configurable in yaml via `test_iterations`)
 3. Score the responses, and output results to `results.csv`
 4. Dump any failures to `responses.txt` for further investigation
 
 ### Test Data Configuration
 
-The `test_data.yaml` file contains:
+The test configuration yaml file contains:
 
-- **Test Cases**: Input/output pairs for function calling scenarios
+- **Test Suites**: A number of test suites, each of which contains test configuration
+- **Test Configuration**: Each test defines the setup prompts, test cases (input/expected response), and which scorer to use
 - **Model Configuration**: Which models to test and how to connect to them
-- **Prompt Templates**: System prompts and data templates for the models
-- **Function Definitions**: Available functions that models can call
 
 ### Example Test Case
 
 ```yaml
-test_runs:
-  - name: "function_calling"
-    data:
-      - input: "lets move over to talk to Charlie"
-        expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Charlie'], 'npc_distance': [3.402], 'target_npc_id': ['1231']}}</tool_call>"
+test_suites:
+  - "function_calling":
+      tests:
+        - input: "lets move over to talk to Charlie"
+          expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Charlie'], 'npc_distance': [3.402], 'target_npc_id': ['1231']}}</tool_call>"
 ```
 
 ## Contributing
@@ -151,6 +151,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-- Built for the Mantella gaming AI project (https://art-from-the-machine.github.io/Mantella), specfically function calling by (https://github.com/yetAnotherModder)
+- Built for the Mantella gaming AI project (https://art-from-the-machine.github.io/Mantella), specifically function calling by [yetAnotherModder](https://github.com/yetAnotherModder)
 - Uses LM Studio for local model inference (https://lmstudio.ai/)
 - Integrates with OpenRouter for remote model access (https://openrouter.ai/)

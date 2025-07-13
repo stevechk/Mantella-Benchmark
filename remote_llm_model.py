@@ -129,14 +129,15 @@ class RemoteLLMModel(BaseLLMModel):
                 print(f"Invalid JSON format for messages: {e}")
                 raise Exception(f"Invalid JSON format for messages: {e}")
             except requests.exceptions.HTTPError as e:
-                if (e.response.status_code in [400, 429, 502]) and retry_count < max_retries:
-                    print(f"Rate limit exceeded ({e.response.status_code}), retrying in 10 seconds... (attempt {retry_count + 1}/{max_retries + 1})")
-                    time.sleep(10)
-                    retry_count += 1
-                    continue
-                elif e.response.status_code in [400, 429, 502]:
-                    print(f"Rate limit exceeded ({e.response.status_code}) after retry: {e}")
-                    raise Exception(f"Rate limit exceeded after retry: {e}")
+                if (e.response.status_code in [400, 429, 500, 502]):
+                    if retry_count < max_retries:
+                        print(f"Rate limit exceeded ({e.response.status_code}), retrying in 10 seconds... (attempt {retry_count + 1}/{max_retries + 1})")
+                        time.sleep(10)
+                        retry_count += 1
+                        continue
+                    else:
+                        print(f"Rate limit exceeded ({e.response.status_code}) after retry: {e}")
+                        raise Exception(f"Rate limit exceeded after retry: {e}")
                 else:
                     print(f"HTTP error occurred: {e}")
                     raise Exception(f"HTTP error occurred: {e}")

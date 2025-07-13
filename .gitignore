@@ -2,5 +2,5 @@
 .vscode/
 venv/
 __pycache__/
-responses.txt
+*.txt
 results.csv

@@ -1,0 +1,330 @@
+# Configuration data
+config:
+  test_iterations: 5
+
+  # Model type - lmstudio, remote
+  # model_type: "remote"
+  model_type: "lmstudio"
+
+  # Model endpoint. Typically "http://127.0.0.1:1234" for LM Studio, or "https://openrouter.ai/api" for OpenRouter
+  # model_endpoint: "https://openrouter.ai/api"
+  model_endpoint: "http://127.0.0.1:1234"
+  
+  # Model list
+  models:
+    # Example Local Gemma 3 models
+    # - google/gemma-3-1b
+    # - lmstudio-community/gemma-3-4B-it-qat-GGUF/gemma-3-4B-it-QAT-Q4_0.gguf
+    # - lmstudio-community/gemma-3-12B-it-qat-GGUF/gemma-3-12B-it-QAT-Q4_0.gguf
+    - art-from-the-machine/Mantella-Skyrim-Llama-3-8B-GGUF/Mantella-Skyrim-Llama-3-8B-Q4_K_M.gguf
+    # - lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q8_0.gguf
+    # - qwen/qwen3-14b
+
+    # example openrouter models
+    # - "mistralai/mistral-small-3.2-24b-instruct:free"
+    # - deepseek/deepseek-chat-v3-0324
+    # - google/gemma-2-9b-it
+    # - google/gemini-2.0-flash-001
+
+  test_suites:
+    - "instruction_following":
+        scorer: 
+          type: OpenRouterScorer
+          model: google/gemma-3-27b-it
+          # type: LmStudioScorer
+          # model: lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf
+          # endpoint: "http://127.0.0.1:1234"
+
+        setup_prompts:
+          - system: |
+              You must respond with only the answer.
+          
+        tests:
+          - input: "repeat after me 'hello my name is Mantella'."
+            expected_response: "Hello, my name is Mantella."
+
+          - input: "what is 1+1?"
+            expected_response: "2"
+
+          - input: "write out the alphabet in lower case in order, without any spaces or punctuation."
+            expected_response: "abcdefghijklmnopqrstuvwxyz"
+
+          - input: "write the word Skyrim five times in lower case with a space between each word."
+            expected_response: "skyrim skyrim skyrim skyrim skyrim"
+
+          - input: "write the following words in alphabetical order with a space between each word: cherry, banana, apple, orange, pear."
+            expected_response: "apple banana cherry orange pear"
+
+          - input: "Write the word Yes if 5 + 3 is greater than 6, otherwise write the word No."
+            expected_response: "Yes"
+
+          - input: "Write the word Blue if the word Red has more letters than the word Green, otherwise write the word Yellow."
+            expected_response: "Yellow"
+
+    - "english_grammar":
+        scorer: 
+          type: OpenRouterScorer
+          model: google/gemma-3-27b-it
+          # type: LmStudioScorer
+          # model: "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf"
+          # endpoint: "http://127.0.0.1:1234"
+
+        setup_prompts:
+          - system: |
+              You must respond with only the answer.
+          
+        tests:
+          - input: "Take the following text and add the word 'zxcvbnm' in front of every noun:\n\"Irileth walked towards the dragon, brandishing her sword.\""
+            expected_response: "zxcvbnm Irileth walked towards the zxcvbnm dragon, brandishing her zxcvbnm sword."
+
+          - input: "Replace every verb in the sentence with the word 'VERB':\n\"She sings beautifully and dances gracefully.\""
+            expected_response: "She VERB beautifully and VERB gracefully."
+
+          - input: "Take the following text and replace every proper noun with the word 'PNOUN':\n\"The dragon breathed fire, and Dave the brave knight fought back.\""
+            expected_response: "The dragon breathed fire, and PNOUN the brave knight fought back."
+
+          - input: "Take the following text and replace every adjective with the word 'ADJECTIVE':\n\"The big grey dragon breathed fire, and Dave the brave knight fought back.\""
+            expected_response: "The ADJECTIVE ADJECTIVE dragon breathed fire, and Dave the ADJECTIVE knight fought back."
+
+          - input: "Take the following text and replace every conjunction with the word 'CONJUNCTION':\n\"He wanted to go, but she stayed home because it was raining.\""
+            expected_response: "He wanted to go, CONJUNCTION she stayed home CONJUNCTION it was raining."
+
+    - "forbidden_knowledge":
+        scorer: 
+          type: OpenRouterScorer
+          model: google/gemma-3-27b-it:free
+          # type: LmStudioScorer
+          # model: "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf"
+          # endpoint: "http://127.0.0.1:1234"
+
+        setup_prompts:
+          - system: |
+              You are tasked with answering questions solely about the world of Skyrim. 
+              For any question that relies on knowlege of Earth, geography, technology or history, respond with 'I dont know'. 
+              You must respond with only the answer.
+          
+        tests:
+          - input: "what is the capital of France?"
+            expected_response: "I dont know"
+
+          - input: "how do mobile phones work?"
+            expected_response: "I dont know"
+
+          - input: "who won world war 2?"
+            expected_response: "I dont know"
+
+          - input: "who is the president of the United States?"
+            expected_response: "I dont know"
+
+          - input: "Who is known as the founder of Microsoft?"
+            expected_response: "I dont know"
+
+          - input: "Who invented the telephone?"
+            expected_response: "I dont know"
+
+          - input: "Which currency is used in Japan?"
+            expected_response: "I dont know"
+
+          - input: "What is the capital of France?"
+            expected_response: "I dont know"
+
+          - input: "How do mobile phones work?"
+            expected_response: "I dont know"
+
+          - input: "Who won world war 2?"
+            expected_response: "I dont know"
+
+          - input: "Who is the president of the United States?"
+            expected_response: "I dont know"
+
+          - input: "Who is known as the founder of Microsoft?"
+            expected_response: "I dont know"
+
+          - input: "Who invented the telephone?"
+            expected_response: "I dont know"
+
+          - input: "What does HTTP stand for?"
+            expected_response: "I dont know"
+
+          - input: "What is the name of Sherlock Holmes’ loyal companion?"
+            expected_response: "I dont know"
+
+          - input: "Which currency is used in Japan?"
+            expected_response: "I dont know"
+
+
+    - "skyrim_knowledge":
+        scorer: 
+          type: OpenRouterScorer
+          model: google/gemma-3-27b-it
+          # type: LmStudioScorer
+          # model: "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf"
+          # endpoint: "http://127.0.0.1:1234"
+
+        setup_prompts:
+          - system: |
+              You must respond with only the answer.
+          
+        tests:
+          - input: "What is the capital of Skyrim?"
+            expected_response: "Solitude"
+
+          - input: "What is the name of the people who are native to Skyrim?"
+            expected_response: "Nords"
+
+          - input: "What flying, fire-breathing creature is known to live in Skyrim?"
+            expected_response: "Dragons"
+
+          - input: "Who is Ulfric Stormcloak?"
+            expected_response: "Ulfric Stormcloak is the Jarl of Windhelm and the leader of the Stormcloak Rebellion."
+
+          - input: "Who is the leader of the Imperial Legion in Skyrim?"
+            expected_response: "General Tullius"
+
+          - input: "Who is Akatosh?"
+            expected_response: "Akatosh is the Dragon God of Time"
+
+          - input: "Where can you study magic in Skyrim?"
+            expected_response: "The College of Winterhold"
+
+          - input: "What are the nine provinces of Tamriel?"
+            expected_response: "Black Marsh, Cyrodiil, Elsweyr, Hammerfell, High Rock, Morrowind, Skyrim, the Summerset Isles, and Valenwood"
+
+          - input: "What curse is the Inner Circle of the Companion's Guild afflicted with?"
+            expected_response: "Lycanthropy"
+
+          - input: "The Falmer are feral descendants of which advanced race?"
+            expected_response: "Snow Elves"
+
+          - input: "Which two belligerents participated in Skyrim's civil war?"
+            expected_response: "Stormcloaks and Imperials"
+
+          - input: "Which order of monks lives on the peak of Skyrim's tallest mountain?"
+            expected_response: "Greybeards"
+
+          - input: "By what name do the dragons refer to the Dragonborn?"
+            expected_response: "Dovahkiin"
+
+          - input: "What are the Draugr?"
+            expected_response: "Undead Nordic Warriors"
+
+          - input: "What title is given to rulers of Skyrim's nine holds?"
+            expected_response: "Jarl"
+
+          - input: "Which city lies on the far western border of Skyrim?"
+            expected_response: "Markarth"
+
+          - input: "Which large animal is frequently seen accompanying giants?"
+            expected_response: "Mammoth"
+
+          - input: "What city is home to the Thieves Guild?"
+            expected_response: "Riften"
+
+          - input: "What race is known for their natural resistance to magic?"
+            expected_response: "Breton"
+
+          - input: "What guild is dedicated to assassinations and stealth killings?"
+            expected_response: "The Dark Brotherhood"
+
+          - input:  "Which city is ruled by Jarl Balgruuf the Greater?"
+            expected_response: "Whiterun"
+
+          - input: "What group specializes in hunting and killing vampires?"
+            expected_response: "Dawnguard"
+
+          - input: "Who founded the Septim Empire?"
+            expected_response: "Tiber Septim (Talos)"
+
+          - input: "What was the name of the ancient Aldmeri civilization that ruled much of Tamriel in the Merethic Era?"
+            expected_response: "The Ayleids"
+
+          - input: "What ancient race created the abandoned ruins, filled with machines and automatons that are found across Tamriel?"
+            expected_response: "The Dwemer"
+
+          - input: "What is the name of the legendary warrior who defeated Mehrunes Dagon during the Oblivion Crisis?"
+            expected_response: "Martin Septim"
+
+
+
+    - "text_comprehension":
+        scorer: 
+          type: OpenRouterScorer
+          model: google/gemma-3-27b-it
+          # type: LmStudioScorer
+          # model: "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf"
+          # endpoint: "http://127.0.0.1:1234"
+
+        setup_prompts:
+          - system: |
+              You must respond with only the answer.
+          
+        tests:
+          - input: |
+              Skyrim, the northernmost province of Tamriel, is a cold and mountainous region. It is known for its dragons, and its inhabitants, the Nords.
+              Which large, winged, fire-breathing creatures are known to live in Skyrim?
+            expected_response: "Dragons"
+
+          - input: |
+              The Nords long ago divided the province into nine geopolitical regions known as holds. Each hold is a large area of land roughly equivalent to a county in Cyrodiil, each individually governed by a jarl who maintains court in the hold's capital city.
+              The nine traditional holds of Skyrim are: Haafingar, Hjaalmarch, the Pale, Winterhold, Eastmarch, the Rift, Whiterun, Falkreath, and the Reach. 
+              During the Interregnum, when the Reach became an independent Reachman kingdom and lost its status as a Nordic hold, a tenth hold named Karthald was created from the Reach's northern fringe.
+              What are the names of the nine traditional holds of Skyrim?
+            expected_response: "Haafingar, Hjaalmarch, the Pale, Winterhold, Eastmarch, the Rift, Whiterun, Falkreath, and the Reach."
+
+          - input: |
+              Solitude is the capital city of both Haafingar Hold, and the province of Skyrim. Currently ruled by Jarl Elisif the Fair, widow of the late High King Torygg, it is the headquarters of the Imperial Legion stationed in Skyrim. 
+              General Tullius commands the Imperial army from the stone-walled Castle Dour with his second-in-command, Legate Rikke, while Solitude's Jarl, Elisif, resides in the Blue Palace. 
+              The Thalmor have an embassy hidden in the nearby mountains. What is the capital of Skyrim?
+            expected_response: "Solitude"
+
+          - input: |
+              A garrison town on the northern coast of Skyrim, the port of Dawnstar is the trade center of the region. Dawnstar is one of the northern most cities in Skyrim along with Solitude and Winterhold. Where is Dawnstar located?
+            expected_response: "Dawnstar is located on the northern coast of Skyrim."
+
+          - input: |
+              Oh, there once was a hero named Ragnar the Red, Who came riding to Whiterun from old Rorikstead. And the braggart did swagger and brandish his blade, As he told of bold battles and gold he had made. 
+              But then he went quiet, did Ragnar the Red, When he met the shield-maiden Matilda, who said. 
+              Oh, you talk and you lie and you drink all our mead, Now I think it's high time that you lie down and bleed! 
+              And so then came clashing and slashing of steel, As the brave lass Matilda charged in, full of zeal. And the braggart named Ragnar was boastful no more - When his ugly red head rolled around on the floor!
+              What happened to Ragnar the Red?
+            expected_response: "Ragnar the Red was killed by Matilda."
+
+          - input: |
+              Nords (also known as Northmen, or called Bron singular in the Language of Dragons) are the Children of the Sky, a race of tall and fair-haired humans from Skyrim who are known for their incredible resistance to cold and magical frost. 
+              They are fierce, strong and enthusiastic warriors, and many become renowned warriors, soldiers and mercenaries all over Tamriel. 
+              Eager to augment their martial skills beyond the traditional methods of Skyrim, they excel in all manner of warfare, and are known as a militant people by their neighbors.
+              Nords were known for a time for their nautical prowess when they migrated from Atmora.
+              How would you describe the Nords?
+            expected_response: "Nords are a race of tall and fair-haired humans from Skyrim who are known for their incredible resistance to cold and magical frost. They are fierce, strong and enthusiastic warriors."
+
+          - input: |
+              Lycanthropy is a condition in Skyrim that gives you the Beast Form greater power, which allows you to take on the form of a werewolf. 
+              Becoming a werewolf adds the Beast Blood constant effect, which grants a resistance to all diseases, but also prevents you from gaining resting bonuses. 
+              Werewolves can deal lethal damage with their claw attacks, move swiftly, and have increased health and stamina. You can become a werewolf by drinking werewolf blood.
+              How can you become a werewolf?
+            expected_response: "You can become a werewolf by drinking werewolf blood."
+
+          - input: |
+              Alteration is one of the six schools of magic. Spells in this school change the world around the caster so normal physical truths no longer hold. 
+              It is sometimes confused with Illusion magic, as both schools seek to change normal truths. 
+              Illusion magic, however, is not bound by the laws of nature but Alteration magic is. 
+              The power of Alteration comes from the fact that the nature of its changes applies to all, whereas Illusion magic affects only the caster and the target. 
+              What does Alteration magic do?
+            expected_response: "Alteration magic changes the world around the caster so normal physical truths no longer hold."
+
+          - input: |
+              Smithing can only be performed at certain locations such as a Blacksmith's shop. In these designated areas you may find several types of tools: 
+              Grindstone: Sharpen weapons for extra damage. The higher your Smithing skill, the more the weapon damage is improved. 
+              Workbench: Allows you to improve armor. The higher your smithing skill, the more the armor rating is improved 
+              Forge or Anvil: Create new weapons and armor from raw materials. 
+              What can you do with a Grindstone?
+            expected_response: "Sharpen weapons for extra damage."
+
+          - input: |
+              Chaurus are medium-to-large, hostile, earwig-like creatures found in swamps, marshlands, and deep underground caverns. They vigorously project a strong acidic poison (spell Chaurus Spit, 7 pts for 7 seconds), which can quickly eat through most armor. 
+              They can cling to walls and have large amounts of health. Chaurus are often found in the company of Falmer, who breed them for their chitin. The Dawnguard add-on adds Chaurus Hunters and Chaurus Hunter Fledglings (along with Chaurus Cocoons), which have apparently transformed from regular Chaurus. 
+              They hover over the ground and have much higher health than even the fearsome Chaurus Reaper, and spit their poison at a much faster rate than regular Chaurus. This poison spit also travels farther than regular Chaurus spit.
+              In a recipe book for chaurus pie, the author recommends that if hunting them, you should 'get yourself some good armor and a nice big sword, and [...] some stout men who won't run off at the first sign of trouble.'
+              The suggestion to use melee force against them seems well-founded, because they are less likely to poison you with their melee attacks.
+              Where are Chaurus found?
+            expected_response: "Chaurus are found in swamps, marshlands, and deep underground caverns."

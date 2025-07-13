@@ -1,47 +1,45 @@
 import json
-from abc import ABC, abstractmethod
-from typing import List
-
-
-class Scorer(ABC):
-    """Abstract base class for model response scorers."""
-    
-    @abstractmethod
-    def __init__(self):
-        pass
-    
-    @abstractmethod
-    def score(self, model_name: str, test_name: str, questions: List[str], references: List[str], candidates: List[str]) -> List[float]:
-        pass
-    
-    @abstractmethod
-    def shutdown(self):
-        pass
-
+from typing import Any, Dict, List
+from scorer import Scorer
 
 class FunctionCallingScorer(Scorer):
     def __init__(self):
         pass
     
-    def score(self, model_name: str, test_name: str, questions: List[str], references: List[str], candidates: List[str]) -> List[float]:
+    def score(self, model_name: str, test_name: str, questions: List[List[Dict[str, Any]]], references: List[str], candidates: List[str]) -> List[float]:
         scores = []
 
         # expect message in format: <tool_call>
         # {'title': 'FunctionCall', 'type': 'object', 'properties': {'name': {'title': 'Name', 'type': 'string'},
         # 'arguments': {'title': 'Arguments', 'type': 'object'}}, 'required': ['arguments', 'name']}
         # </tool_call>
-        
+
         for i, question in enumerate(questions):
 
+            question_text = question[len(question) - 1]['content']
+            response_text = candidates[i]
+
+            # change blocks that are markdown format e.g (```json... ```) to xml (<tool_call></tool_call>)
+            if '```json' in response_text:
+                response_text = response_text.replace('```json', '<tool_call>').replace('```', '</tool_call>')
+            elif response_text.count('```') > 1:
+                response_text = response_text.replace('```', '<tool_call>', 1)
+                response_text = response_text.replace('```', '</tool_call>', 1)
+
+                if response_text.count('```') > 0:
+                    # just return the first tool call block
+                    response_text = response_text.split('</tool_call>')[0] + '</tool_call>'
+
+
             score = 0.0
-            if question == references[i]:
+            if question_text == references[i]:
                 score = 1.0
             else:
 
                 if "<tool_call>" not in references[i]:
                     # if we dont expect a tool call, as long as the candidate doesnt include a tool call block, we can ignore the rest of the text
 
-                    if "<tool_call>" not in candidates[i]:
+                    if "<tool_call>" not in response_text:
                         score = 1.0
                     else:
                         score = 0.0
@@ -50,10 +48,10 @@ class FunctionCallingScorer(Scorer):
 
                     reference_between_tags = references[i].split("<tool_call>")[1].split("</tool_call>")[0]
 
-                    if "<tool_call>" in candidates[i]:
-                        candidate_between_tags = candidates[i].split("<tool_call>")[1].split("</tool_call>")[0]
+                    if "<tool_call>" in response_text:
+                        candidate_between_tags = response_text.split("<tool_call>")[1].split("</tool_call>")[0]
                     else:
-                        candidate_between_tags = candidates[i] # try to interpret the whole response as a tool call
+                        candidate_between_tags = response_text # try to interpret the whole response as a tool call
 
                     if candidate_between_tags == reference_between_tags:
                         score = 1.0
@@ -71,16 +69,6 @@ class FunctionCallingScorer(Scorer):
                             score = 0.0
 
             scores.append(score)
-
-            # dump failures for further analysis
-            if score < 1.0:
-                with open("responses.txt", "a", encoding='utf-8') as f:
-                    f.write(f"Model: {model_name}\n")
-                    f.write(f"Question: {question}\n")
-                    f.write(f"Reference: {references[i]}\n")
-                    f.write(f"Candidate: {candidates[i]}\n")
-                    f.write(f" = Score: {score}\n")
-                    f.write(f"--------------------------------\n")
 
         return scores
     
@@ -107,10 +95,6 @@ def compare_json_strings(candidate_str: str, reference_str: str) -> bool:
         reference_sorted = json.dumps(reference_json, sort_keys=True, separators=(',', ':'))
         
         matches = (candidate_sorted == reference_sorted)
-
-        if not matches:
-            with open("responses.txt", "a", encoding='utf-8') as f:
-                f.write(f"JSON MISMATCH: {candidate_sorted} != {reference_sorted}\n")
 
         return matches
         
