@@ -5,33 +5,25 @@ A simple benchmarking tool for benchmarking Large Language Models (LLMs) for use
 ## Current Leaderboard
 
 ### Function testing
-This test evaluates function calling (also known as tool calling) LLMs.
+This test evaluates function calling (also known as tool calling) LLMs. Scores and times are averaged across both single & multi NPC benchmarks.
 
-| Base Model  | Model                                                                                         | Deployment Type | Size (if local) | Average Score (out of 1) | Average Call Time (seconds) | Cost         |
-| ----------- | --------------------------------------------------------------------------------------------- | --------------- | --------------- | ------------------------ | --------------------------- | ------------ |
-| Qwen 2.5    | Mungert/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-q4_k_l.gguf                        | local           | 5.09 GB         | 0.878                    | 0.87                        | Free (local) |
-| Gemma 3     | lmstudio-community/gemma-3-4B-it-qat-GGUF/gemma-3-4B-it-QAT-Q4_0.gguf                         | local           | 3.21 GB         | 0.850                    | 0.61                        | Free (local) |
-| Qwen 2.5    | Qwen/Qwen2.5-7B-Instruct-GGUF/qwen2.5-7b-instruct-q8_0-00001-of-00003.gguf                    | local           | 8.10 GB         | 0.850                    | 7.85                        | Free (local) |
-| Gemma 3     | lmstudio-community/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q8_0.gguf                                 | local           | 4.98 GB         | 0.835                    | 0.79                        | Free (local) |
-| Qwen 2.5    | lmstudio-community/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-Q4_K_M.gguf             | local           | 4.68 GB         | 0.821                    | 0.90                        | Free (local) |
-| Qwen 3      | lmstudio-community/Qwen3-1.7B-GGUF/Qwen3-1.7B-Q8_0.gguf                                       | local           | 2.17 GB         | 0.778                    | 2.01                        | Free (local) |
-| GPT-4o-mini | openai/gpt-4o-mini                                                                            | OpenRouter      |                 | 0.750                    | 1.40                        | $            |
-| Gemma 3     | google/gemma-3-27b-it:free                                                                    | OpenRouter      |                 | 0.607                    | 4.52                        | Free         |
-| Qwen 3      | qwen/qwen3-32b:free                                                                           | OpenRouter      |                 | 0.607                    | 9.76                        | Free         |
-| Gemma 3     | lmstudio-community/gemma-3-12B-it-qat-GGUF/gemma-3-12B-it-QAT-Q4_0.gguf                       | local           | 7.74 GB         | 0.528                    | 6.07                        | Free (local) |
-| Llama 3     | lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf | local           | 4.92 GB         | 0.528                    | 1.49                        | Free (local) |
-| Mistral     | mistralai/mistral-small-3.2-24b-instruct:free                                                 | OpenRouter      |                 | 0.357                    | 3.23                        | Free         |
-| Gemini 2.5  | google/gemini-2.5-pro                                                                         | OpenRouter      |                 | 0.357                    | 8.96                        | $$$          |
-| Llama 3     | lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q8_0.gguf   | local           | 8.54 GB         | 0.307                    | 19.99                       | Free (local) |
-| Gemma 3     | lmstudio-community/gemma-3-1B-it-QAT-GGUF/gemma-3-1B-it-QAT-Q4_0.gguf                         | local           | 720 MB          | 0.207                    | 1.34                        | Free (local) |
+| Base Model  | Model                                                                  | Deployment Type | Size (if local) | Average Score | Average Call Time (seconds) | Cost         | Comments                                                                                    |
+| ----------- | ---------------------------------------------------------------------- | --------------- | --------------- | ------------- | --------------------------- | ------------ | ------------------------------------------------------------------------------------------- |
+| Qwen 3      | qwen/qwen3-coder                                                       | OpenRouter      |                 | 94%           | 2.5                         | $1.50+ pm    | Best performance, but relatively slow and fairly expensive                                  |
+| Qwen 2.5    | qwen2.5-coder-32b-instruct                                             | local           | 19.85 GB        | 84%           | 2.47                        | Free (local) | Best performing local model, but slow and at 20 GB its too large for most normal gaming PCs |
+| GPT-4o-mini | openai/gpt-4o-mini                                                     | OpenRouter      |                 | 83%           | 1.45                        | $0.75 pm     | Good all-rounder if you dont have enough VRAM to run a local model                          |
+| Qwen 3      | lmstudio-community/Qwen3-1.7B-GGUF/Qwen3-1.7B-Q8_0.gguf                | local           | 2.17 GB         | 82%           | 2.475                       | Free (local) | Excellent performer, especially for the size. Can likely run on most PCs                    |
+| Qwen 2.5    | Mungert/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-q4_k_l.gguf | local           | 5.09 GB         | 80%           | 0.625                       | Free (local) | Fast local model. Good all-rounder                                                          |
+| Qwen 2.5    | qwen2.5-coder-14b-instruct                                             | local           | 8.99 GB         | 78%           | 0.99                        | Free (local) | Mungert/Qwen2.5-7B-Instruct-1M-GGUF is faster, higher performing and uses less VRAM         |
 
 Notes:
-- Tests were run with default model parameters (e.g. temperature)
-- The local models reference the LMStudio/HuggingFace link. 
-- All local inference was run on a 3070ti (8gb VRAM) under Windows 11. 
+- Only models that consistently score > 75% average are listed.
+- Tests were run with default model parameters (e.g. temperature).
+- The local models reference the exact LMStudio/HuggingFace model and quant that was used.
+- All local inference was run on a 3090 (24gb VRAM) under Windows 11. 
 - OpenAI models have a specific tool protocol that is not currently supported by this benchmark, so OpenAI results may be higher than indicated.
 - Models format results in different ways (even when instructed to follow a standard). Some reasonable attempts have been made at parsing results before comparing.
-- `test_iterations` is set to 10 to get a good balance of results
+- `test_iterations` is set to 5 to get a good balance of results.
 
 Function calling requires the LLM to understand natural language commands and convert them into structured function calls.
 

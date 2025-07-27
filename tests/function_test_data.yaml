@@ -1,6 +1,6 @@
 # Configuration data
 config:
-  test_iterations: 1
+  test_iterations: 5
 
   # Model type - lmstudio, remote
   # model_type: "remote"
@@ -12,45 +12,14 @@ config:
   
   # Model list
   models:
-    # Example Local Gemma 3 models
-    # - "lmstudio-community/gemma-3-12B-it-qat-GGUF/gemma-3-12B-it-QAT-Q4_0.gguf" #7.74gb
-    - "lmstudio-community/gemma-3-4B-it-qat-GGUF/gemma-3-4B-it-QAT-Q4_0.gguf" # 3.21gb
-    # - "lmstudio-community/gemma-3-4b-it-GGUF/gemma-3-4b-it-Q8_0.gguf" # 4.98gb
-    # - "lmstudio-community/gemma-3-1B-it-QAT-GGUF/gemma-3-1B-it-QAT-Q4_0.gguf"
+    # Top performing local models
+    - lmstudio-community/Qwen3-1.7B-GGUF/Qwen3-1.7B-Q8_0.gguf # 2.17 GB TOOL CALLING
+    - Mungert/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-q4_k_l.gguf # 5.09 GB TOOL CALLING
+    - qwen2.5-coder-14b-instruct # 8.99 GB
 
-    # Example Local Llama 3 models
-    - "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q4_K_M.gguf" #4.92gb
-    # - "lmstudio-community/Meta-Llama-3-8B-Instruct-BPE-fix-GGUF/Meta-Llama-3-8B-Instruct-Q8_0.gguf"  #8.54gb
-
-    # Example Local Qwen models
-    - "lmstudio-community/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-Q4_K_M.gguf" #4.68 GB TOOL CALLING
-    - "Mungert/Qwen2.5-7B-Instruct-1M-GGUF/Qwen2.5-7B-Instruct-1M-q4_k_l.gguf" # 5.09 GB TOOL CALLING
-    # - "Qwen/Qwen2.5-7B-Instruct-GGUF/qwen2.5-7b-instruct-q8_0-00001-of-00003.gguf" # 8.10 GB TOOL CALLING
-    - "qwen/qwen3-1.7b" # 2.17 GB TOOL CALLING
-    # - "art-from-the-machine/Mantella-Skyrim-Llama-3-8B-GGUF/Mantella-Skyrim-Llama-3-8B-Q4_K_M.gguf" #4.92gb
- 
-    # example openrouter models
-    # - "mistralai/mistral-small-3.2-24b-instruct:free"
-    # - "google/gemma-3-27b-it:free"
-    # - "google/gemma-3-4b-it:free"
-    # - "google/gemma-3-12b-it:free"
-    # - "google/gemma-3n-e4b-it:free"
-    # - "qwen/qwen3-8b:free"
-    # - "qwen/qwen3-14b:free"
-    # - "qwen/qwen3-32b:free"
-    # - "qwen/qwen3-30b-a3b:free"
-    # - "qwen/qwen3-235b-a22b:free"
-    # - "minimax/minimax-m1:extended"
-    # - "moonshotai/kimi-dev-72b:free"
-    # - "deepseek/deepseek-r1-0528-qwen3-8b:free"
-    # - "deepseek/deepseek-r1-0528:free"
-    # - "deepseek/deepseek-chat-v3-0324:free"
-    # - "sarvamai/sarvam-m:free"
-    # - "thudm/glm-z1-32b:free"
-    # - "nvidia/llama-3.3-nemotron-super-49b-v1:free"
-    # - "nvidia/llama-3.1-nemotron-ultra-253b-v1:free"
-    # - "meta-llama/llama-4-maverick:free"
-    # - "meta-llama/llama-4-scout:free"
+    # Top performing openrouter models
+    # - openai/gpt-4o-mini
+    # - qwen/qwen3-coder
 
   test_suites:
     - "function_calling_single_npc":
