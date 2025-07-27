@@ -79,7 +79,8 @@ class FunctionCallingScorer(Scorer):
 def compare_json_strings(candidate_str: str, reference_str: str) -> bool:
     """
     Compare two JSON strings, handling various formatting differences.
-    Returns True if they represent the same data, False otherwise.
+    Returns True if the candidate contains all fields from the reference (and may have extra fields),
+    False otherwise. Handles arbitrary levels of nesting.
     """
     try:
         # Normalize quotes and whitespace
@@ -90,14 +91,42 @@ def compare_json_strings(candidate_str: str, reference_str: str) -> bool:
         candidate_json = json.loads(candidate_normalized)
         reference_json = json.loads(reference_normalized)
         
-        # Compare as sorted JSON strings to handle key order differences
-        candidate_sorted = json.dumps(candidate_json, sort_keys=True, separators=(',', ':'))
-        reference_sorted = json.dumps(reference_json, sort_keys=True, separators=(',', ':'))
-        
-        matches = (candidate_sorted == reference_sorted)
-
-        return matches
+        result = _compare_json_recursive_ignoring_additional_fields(candidate_json, reference_json)
+        return result
         
     except (json.JSONDecodeError, TypeError, ValueError):
         print(f"Error comparing JSON strings: Candidate: {candidate_str}, Reference: {reference_str}")
-        return False 
+        return False
+
+
+def _compare_json_recursive_ignoring_additional_fields(candidate, reference):
+    if type(candidate) != type(reference):
+        return False
+    
+    if isinstance(reference, dict):
+        # For dictionaries, check that all reference keys exist in candidate with same values
+        for key, value in reference.items():
+            if key not in candidate:
+                return False
+            if not _compare_json_recursive_ignoring_additional_fields(candidate[key], value):
+                return False
+        return True
+    
+    elif isinstance(reference, list):
+        # For lists, check that all reference items exist in candidate
+        if len(candidate) < len(reference):
+            return False
+        # Check that all reference items are present in candidate (order may vary)
+        for ref_item in reference:
+            found = False
+            for cand_item in candidate:
+                if _compare_json_recursive_ignoring_additional_fields(cand_item, ref_item):
+                    found = True
+                    break
+            if not found:
+                return False
+        return True
+    
+    else:
+        # For primitive types (str, int, float, bool, None), exact match
+        return candidate == reference 
