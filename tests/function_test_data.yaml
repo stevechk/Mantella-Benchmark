@@ -53,7 +53,7 @@ config:
     # - "meta-llama/llama-4-scout:free"
 
   test_suites:
-    - "function_calling":
+    - "function_calling_single_npc":
         scorer: 
           type: FunctionCallingScorer
 
@@ -66,56 +66,30 @@ config:
               Don't make assumptions about what values to plug into functions. 
               The user might refer to Bob as 'me' or 'I'. 
               Prioritize `npc_attack_other_npc` if requested to attack or shoot at another NPC; 
-              or `list_spells` if requested to list the spells that a NPC has or knows.; 
-              or `npc_loot_items` if requested to loot, scavenge or collect items; 
-              or `move_character_near_npc` if requested to move or follow; 
-              or `teleport_npc` if requested to move or follow; 
-              or `npc_use_spell_on_target` if requested to use a specific spell..
-              <tools>
-              [{'type': 'function', 'function': {'name': 'npc_attack_other_npc', 
-              'description': 'Use this function to select a target NPC to attack.', 
-              'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
-              'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
-              'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
-              'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
-              'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
-              'required': ['target_npc_id']}}}, 
-              {'type': 'function', 'function': {'name': 'list_spells', 
-              'description': 'Use this function to list the spells of a NPC.', 
-              'parameters': {'type': 'object', 'properties': {'list_spells_mode': {'type': 'array', 
-              'description': 'List of all available spells.', 'items': {'type': 'string'}}}, 
-              'required': ['list_spells_mode']}}}, 
-              {'type': 'function', 'function': {'name': 'npc_loot_items', 
-              'description': "Use this function to loot items. If the type of item to loot is unspecified, then use 'any'.", 
-              'parameters': {'type': 'object', 'properties': {'item_mode': {'type': 'string', 
-              'description': 'The type of item to loot.'}}, 'required': ['item_mode']}}}, 
-              {'type': 'function', 'function': {'name': 'move_character_near_npc', 
-              'description': 'Determine a target NPC for a character to move towards.', 
-              'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
-              'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
-              'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
-              'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
-              'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
-              'required': ['target_npc_id']}}}, 
-              {'type': 'function', 'function': {'name': 'teleport_npc', 
-              'description': 'Determine a target NPC to teleport to.', 
-              'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 
-              'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 
-              'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 
-              'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 
-              'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
-              'required': ['target_npc_id']}}}, 
-              {'type': 'function', 'function': {'name': 'npc_use_spell_on_target', 
-              'description': 'Determine a target on which to use a specified spell.', 
-              'parameters': {'type': 'object', 'properties': {'spell_mode': {'type': 'string', 
-              'description': 'The name of a spell.'}, 'target_npc_id': {'type': 'array', 
-              'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}}, 
-              'required': ['spell_mode', 'target_npc_id']}}}]
-              </tools>. 
+              or `give_directions` if requested to give directions to a location.;
+              or `list_spells` if requested to list the spells that a NPC has or knows.;
+              or `list_trainer_skills` if requested to list the skills that a NPC can train the player in.;
+              or `npc_loot_items` if requested to loot, scavenge or collect items;
+              or `move_character_near_npc` if requested to move or follow;
+              or `teleport_npc` if requested to move or follow;
+              or `train_skill` if requested to train the player in a skill.;
+              or `npc_use_spell_on_target` if requested to use a specific spell.;
+              or `make_npc_wait` if requested to wait or stop.
+              <tools>[
+              {\'type\': \'function\', \'function\': {\'name\': \'npc_attack_other_npc\', \'description\': \'Use this function to select a target NPC to attack.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'npc_name\': {\'type\': \'array\', \'description\': \'The name of the target NPC.\', \'items\': {\'type\': \'string\'}}, \'npc_distance\': {\'type\': \'array\', \'description\': \'The distance from the target NPC.\', \'items\': {\'type\': \'number\'}}, \'target_npc_id\': {\'type\': \'array\', \'description\': \'The ID of the target NPC.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'target_npc_id\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'give_directions\', \'description\': \'Use this function to ask an NPC for directions.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'give_directions_mode\': {\'type\': \'string\', \'description\': \'The location to which the NPC should give directions.\'}}, \'required\': [\'give_directions_mode\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'list_spells\', \'description\': \'Use this function to list the spells of a NPC.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'list_spells_mode\': {\'type\': \'array\', \'description\': \'List of all available spells.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'list_spells_mode\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'list_trainer_skills\', \'description\': \'Use this function to list the skills that a NPC can train the player in.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'list_trainer_skills_mode\': {\'type\': \'array\', \'description\': \'List of all available skills that the NPC can train the player in.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'list_trainer_skills_mode\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'npc_loot_items\', \'description\': "Use this function to loot items. If the type of item to loot is unspecified, then use \'any\'.", \'parameters\': {\'type\': \'object\', \'properties\': {\'item_mode\': {\'type\': \'string\', \'description\': \'The type of item to loot.\'}}, \'required\': [\'item_mode\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'move_character_near_npc\', \'description\': \'Determine a target NPC for a character to move towards.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'npc_name\': {\'type\': \'array\', \'description\': \'The name of the target NPC.\', \'items\': {\'type\': \'string\'}}, \'npc_distance\': {\'type\': \'array\', \'description\': \'The distance from the target NPC.\', \'items\': {\'type\': \'number\'}}, \'target_npc_id\': {\'type\': \'array\', \'description\': \'The ID of the target NPC.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'target_npc_id\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'teleport_npc\', \'description\': \'Determine a target NPC to teleport to.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'npc_name\': {\'type\': \'array\', \'description\': \'The name of the target NPC.\', \'items\': {\'type\': \'string\'}}, \'npc_distance\': {\'type\': \'array\', \'description\': \'The distance from the target NPC.\', \'items\': {\'type\': \'number\'}}, \'target_npc_id\': {\'type\': \'array\', \'description\': \'The ID of the target NPC.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'target_npc_id\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'train_skill\', \'description\': \'Use this function to request the NPC to train the player in a skill.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'skill_to_train_mode\': {\'type\': \'string\', \'description\': \'The skill that the NPC will train the player in.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'skill_to_train_mode\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'npc_use_spell_on_target\', \'description\': \'Determine a target on which to use a specified spell.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'spell_mode\': {\'type\': \'string\', \'description\': \'The name of a spell.\'}, \'target_npc_id\': {\'type\': \'array\', \'description\': \'The ID of the target NPC.\', \'items\': {\'type\': \'string\'}}}, \'required\': [\'spell_mode\', \'target_npc_id\']}}}, 
+              {\'type\': \'function\', \'function\': {\'name\': \'make_npc_wait\', \'description\': \'Use this function to make the NPC wait or stop moving by returning true for is_waiting.\', \'parameters\': {\'type\': \'object\', \'properties\': {\'is_waiting\': {\'type\': \'boolean\', \'description\': \'Set to true to make the NPC wait at their current position.\'}}, \'required\': [\'is_waiting\']}}}
+              ] </tools>.
               For each function call return a JSON object, with the following pydantic model json schema: 
               <tool_call>
-              {'title': 'FunctionCall', 'type': 'object', 'properties': {'name': {'title': 'Name', 'type': 'string'}, 
-              'arguments': {'title': 'Arguments', 'type': 'object'}}, 'required': ['arguments', 'name']}
+              {'title': 'FunctionCall', 'type': 'object', 'properties': {'name': {'title': 'Name', 'type': 'string'}, 'arguments': {'title': 'Arguments', 'type': 'object'}}, 'required': ['arguments', 'name']}
               </tool_call>
 
           - user: |
@@ -133,37 +107,104 @@ config:
               The distances are calculated from Bob's position.
               Here are the spell(or modes) that the NPC has : 
               1. Firestorm, 2. Blinding Light
+              Here are the skills (or modes) that the NPC can train the player in:
+              1. HeavyArmor
+              2. Destruction
+              3. Illusion
               Here are the values for loot items functions: 
               Possible item types to loot: ["any", "weapons", "armor", "junk", "consumables"] 
             
         tests:
+          - input: "move to Charlie"
+            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'target_npc_id': ['1231']}}</tool_call>"
+
+          - input: "follow Eve"
+            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'target_npc_id': ['1233']}}</tool_call>"
+
           - input: "lets move over to talk to Charlie"
-            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Charlie'], 'npc_distance': [3.402], 'target_npc_id': ['1231']}}</tool_call>"
+            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'target_npc_id': ['1231']}}</tool_call>"
           
           - input: "lets go and find Alice"
-            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'npc_name': ['Alice'], 'npc_distance': [30.402], 'target_npc_id': ['1230']}}</tool_call>"
+            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'target_npc_id': ['1230']}}</tool_call>"
           
+          - input: "follow me"
+            expected_response: "<tool_call>{'name': 'move_character_near_npc', 'arguments': {'target_npc_id': ['20']}}</tool_call>"
+
           - input: "teleport to David"
-            expected_response: "<tool_call>{'name': 'teleport_npc', 'arguments': {'npc_name': ['David'], 'npc_distance': [6.402], 'target_npc_id': ['1232']}}</tool_call>"
+            expected_response: "<tool_call>{'name': 'teleport_npc', 'arguments': {'target_npc_id': ['1232']}}</tool_call>"
           
+          - input: "teleport to me"
+            expected_response: "<tool_call>{'name': 'teleport_npc', 'arguments': {'target_npc_id': ['20']}}</tool_call>"
+          
+          - input: "list all the spells you know"
+            expected_response: "<tool_call>{'name': 'list_spells', 'arguments': {'list_spells_mode': ['Firestorm', 'Blinding Light']}}</tool_call>"
+          
+          - input: "tell me all the spells you know"
+            expected_response: "<tool_call>{'name': 'list_spells', 'arguments': {'list_spells_mode': ['Firestorm', 'Blinding Light']}}</tool_call>"
+
           - input: "what spells do you know?"
             expected_response: "<tool_call>{'name': 'list_spells', 'arguments': {'list_spells_mode': ['Firestorm', 'Blinding Light']}}</tool_call>"
           
+          - input: "loot consumables for me"
+            expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'consumables'}}</tool_call>"
+
+          - input: "see what junk you can find"
+            expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'junk'}}</tool_call>"
+
+          - input: "loot any armor you can find"
+            expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'armor'}}</tool_call>"
+
           - input: "go and loot some weapons from the nearby chest"
             expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'weapons'}}</tool_call>"
           
           - input: "go and loot whatever you can find"
             expected_response: "<tool_call>{'name': 'npc_loot_items', 'arguments': {'item_mode': 'any'}}</tool_call>"
           
+          - input: "attack charlie"
+            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'target_npc_id': ['1231']}}</tool_call>"
+          
           - input: "attack Bob with your sword"
-            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'npc_name': ['Bob'], 'npc_distance': [1.0], 'target_npc_id': ['20']}}</tool_call>"
+            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'target_npc_id': ['20']}}</tool_call>"
+          
+          - input: "attack me"
+            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'target_npc_id': ['20']}}</tool_call>"
           
           - input: "attack Alice with your bow"
-            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'npc_name': ['Alice'], 'npc_distance': [30.402], 'target_npc_id': ['1230']}}</tool_call>"
+            expected_response: "<tool_call>{'name': 'npc_attack_other_npc', 'arguments': {'target_npc_id': ['1230']}}</tool_call>"
           
           - input: "cast Blinding Light on Bob"
             expected_response: "<tool_call>{'name': 'npc_use_spell_on_target', 'arguments': {'spell_mode': 'Blinding Light', 'target_npc_id': ['20']}}</tool_call>"
-          
+
+          - input: "give me directions to windhelm"
+            expected_response: "<tool_call>{'name': 'give_directions', 'arguments': {'give_directions_mode': 'windhelm'}}</tool_call>"
+
+          - input: "how do i get to Morthal?"
+            expected_response: "<tool_call>{'name': 'give_directions', 'arguments': {'give_directions_mode': 'Morthal'}}</tool_call>"
+
+          - input: "can you show me the way to Riverwood"
+            expected_response: "<tool_call>{'name': 'give_directions', 'arguments': {'give_directions_mode': 'Riverwood'}}</tool_call>"
+
+          - input: "what skills can you train me in?"
+            expected_response: "<tool_call>{'name': 'list_trainer_skills', 'arguments': {'list_trainer_skills_mode': ['HeavyArmor', 'Destruction', 'Illusion']}}</tool_call>"
+
+          - input: "tell me what skills you know"
+            expected_response: "<tool_call>{'name': 'list_trainer_skills', 'arguments': {'list_trainer_skills_mode': ['HeavyArmor', 'Destruction', 'Illusion']}}</tool_call>"
+
+          - input: "train me in illusion"
+            expected_response: "<tool_call>{'name': 'train_skill', 'arguments': {'skill_to_train_mode': 'Illusion'}}</tool_call>"
+
+          - input: "train me in destruction"
+            expected_response: "<tool_call>{'name': 'train_skill', 'arguments': {'skill_to_train_mode': 'Destruction'}}</tool_call>"
+
+          - input: "wait here"
+            expected_response: "<tool_call>{'name': 'make_npc_wait', 'arguments': {'is_waiting': true}}</tool_call>"
+
+          - input: "wait here for me"
+            expected_response: "<tool_call>{'name': 'make_npc_wait', 'arguments': {'is_waiting': true}}</tool_call>"
+
+          - input: "stop moving"
+            expected_response: "<tool_call>{'name': 'make_npc_wait', 'arguments': {'is_waiting': true}}</tool_call>"
+
           # also test for when the model should not return a tool call
           - input: "tell me what you think about Alice"
             expected_response: ""
@@ -171,11 +212,114 @@ config:
           - input: "tell me about your relationship with David"
             expected_response: ""
 
-          - input: "where is Bob?"
+          - input: "where are we?"
+            expected_response: ""
+          
+          - input: "where is Eve?"
             expected_response: ""
           
           - input: "what is the weather like?"
             expected_response: ""
           
           - input: "hello"
+            expected_response: ""
+
+
+    - "function_calling_multi_npc":
+        scorer: 
+          type: FunctionCallingScorer
+
+        setup_prompts:
+          - system: |
+              You are a function calling AI model. You are provided with function signatures within <tools> </tools> XML tags. 
+              You may call one or more functions to assist with the user query. If available tools are not relevant in assisting with user query, 
+              just respond in natural conversational language. Don't make assumptions about what values to plug into functions. 
+              The user might refer to Dave as 'me' or 'I'. 
+              Prioritize `multi_npc_attack_other_npc` if requested to attack or shoot at another NPC; 
+              or `multi_npc_loot_items` if requested to loot, scavenge or collect items; 
+              or `move_characters_near_npc` if requested to move or follow; 
+              or `multi_teleport_npc` if requested to wait or stop; 
+              or `multi_make_npc_wait` if requested to wait or stop.
+              <tools>[
+              {'type': 'function', 'function': {'name': 'multi_npc_attack_other_npc', 'description': 'Determine one or more NPCs that will attack one target NPC .', 'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}, 'source_npc_ids': {'type': 'array', 'description': 'An array containing the IDs of one or more NPCs that will be attacking the target. ', 'items': {'type': 'number'}}}, 'required': ['target_npc_id', 'source_npc_ids']}}}, 
+              {'type': 'function', 'function': {'name': 'multi_npc_loot_items', 'description': "Determine one or more NPCs that will loot items. If the type of item to loot is unspecified, then use 'any'.", 'parameters': {'type': 'object', 'properties': {'item_mode': {'type': 'string', 'description': 'The type of item to loot.'}, 'source_npc_ids': {'type': 'array', 'description': 'An array containing the IDs of one or more NPCs that will be moving towards the target. ', 'items': {'type': 'number'}}}, 'required': ['item_mode', 'source_npc_ids']}}}, 
+              {'type': 'function', 'function': {'name': 'move_characters_near_npc', 'description': 'Determine one or more NPCs that will move towards another NPC.', 'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}, 'source_npc_ids': {'type': 'array', 'description': 'An array containing the IDs of one or more NPCs that will be moving towards the target. ', 'items': {'type': 'number'}}}, 'required': ['target_npc_id', 'source_npc_ids']}}}, 
+              {'type': 'function', 'function': {'name': 'multi_teleport_npc', 'description': 'Use this function to make one or more NPCs teleport to a specific target NPC.', 'parameters': {'type': 'object', 'properties': {'npc_name': {'type': 'array', 'description': 'The name of the target NPC.', 'items': {'type': 'string'}}, 'npc_distance': {'type': 'array', 'description': 'The distance from the target NPC.', 'items': {'type': 'number'}}, 'target_npc_id': {'type': 'array', 'description': 'The ID of the target NPC.', 'items': {'type': 'string'}}, 'source_npc_ids': {'type': 'array', 'description': 'An array containing the IDs of one or more NPCs that will be moving towards the target. ', 'items': {'type': 'number'}}}, 'required': ['target_npc_id', 'source_npc_ids']}}}, 
+              {'type': 'function', 'function': {'name': 'multi_make_npc_wait', 'description': 'Use this function to make one or more NPCs wait or stop moving by returning true for is_waiting.', 'parameters': {'type': 'object', 'properties': {'is_waiting': {'type': 'boolean', 'description': 'Set to true to make the NPC wait at their current position.'}, 'source_npc_ids': {'type': 'array', 'description': 'An array containing the IDs of one or more NPCs that will be waiting. ', 'items': {'type': 'number'}}}, 'required': ['is_waiting', 'source_npc_ids']}}}
+              ]</tools>.
+              For each function call return a JSON object, with the following pydantic model json schema: 
+              <tool_call>{'title': 'FunctionCall', 'type': 'object', 'properties': {'name': {'title': 'Name', 'type': 'string'}, 'arguments': {'title': 'Arguments', 'type': 'object'}}, 'required': ['arguments', 'name']}</tool_call>
+
+          - user: |
+              Here are the values for NPC functions that require targets:
+              1. target name: Dave, distance: 1.0, target npc ID: 20
+              2. target name: Drevis Neloren, distance: 155.475067, target npc ID: 115110
+              3. target name: J'zargo, distance: 388.484344, target npc ID: 115107
+              4. target name: Windhelm Guard, distance: 1143.533813, target npc ID: 285719
+              5. target name: Brunwulf Free-Winter, distance: 1596.983032, target npc ID: 110871
+              6. target name: Windhelm Guard, distance: 1897.314087, target npc ID: 1035942
+              7. target name: Rolff Stone-Fist, distance: 3101.937256, target npc ID: 258029
+              8. target name: Silda the Unseen, distance: 3471.794434, target npc ID: 110882
+              9. target name: Faryl Atheron, distance: 3823.596436, target npc ID: 110885
+              10. target name: Windhelm Guard, distance: 3928.835938, target npc ID: 285715
+              The distances are calculated from Dave's position.
+              
+              Here are the values for NPC functions that require sources: 
+              1. source name: Drevis Neloren, source npc ID: 115110
+              2. source name: J'zargo, source npc ID: 115107
+              
+              Here are the values for loot items functions:
+              Possible item types to loot: ["any", "weapons", "armor", "junk", "consumables"]
+            
+        tests:
+          - input: "loot anything you can find"
+            expected_response: "<tool_call>{'name': 'multi_npc_loot_items', 'arguments': {'item_mode': 'any', 'source_npc_ids': [115110, 115107]}}</tool_call>"
+          
+          - input: "loot any weapons you can find"
+            expected_response: "<tool_call>{'name': 'multi_npc_loot_items', 'arguments': {'item_mode': 'weapons', 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "loot any armor you can find"
+            expected_response: "<tool_call>{'name': 'multi_npc_loot_items', 'arguments': {'item_mode': 'armor', 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "loot any junk you can find"
+            expected_response: "<tool_call>{'name': 'multi_npc_loot_items', 'arguments': {'item_mode': 'junk', 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "loot any consumables you can find"
+            expected_response: "<tool_call>{'name': 'multi_npc_loot_items', 'arguments': {'item_mode': 'consumables', 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "attack brunwulf"
+            expected_response: "<tool_call>{'name': 'multi_npc_attack_other_npc', 'arguments': {'target_npc_id': ['110871'], 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "attack me"
+            expected_response: "<tool_call>{'name': 'multi_npc_attack_other_npc', 'arguments': {'target_npc_id': ['20'], 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "wait here"
+            expected_response: "<tool_call>{'name': 'multi_make_npc_wait', 'arguments': {'is_waiting': true, 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "move towards faryl"
+            expected_response: "<tool_call>{'name': 'move_characters_near_npc', 'arguments': {'target_npc_id': ['110885'], 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "move towards me"
+            expected_response: "<tool_call>{'name': 'move_characters_near_npc', 'arguments': {'target_npc_id': ['20'], 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "follow me"  
+            expected_response: "<tool_call>{'name': 'move_characters_near_npc', 'arguments': {'target_npc_id': ['20'], 'source_npc_ids': [115110, 115107]}}</tool_call>"
+
+          - input: "teleport towards Silda"
+            expected_response: "<tool_call>{'name': 'multi_teleport_npc', 'arguments': {'target_npc_id': ['110882'], 'source_npc_ids': [115107, 115110]}}</tool_call>"
+
+          # also test for when the model should not return a tool call
+          - input: "the weather is awful today"
+            expected_response: ""
+
+          - input: "Rolff looks stupid in that outfit"
+            expected_response: ""
+
+          - input: "what should we do next?"
+            expected_response: ""
+
+          - input: "tell me a bit about yourself"
+            expected_response: ""
+
+          - input: "why are there so many guards?"
             expected_response: ""
