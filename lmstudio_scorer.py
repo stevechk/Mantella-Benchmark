@@ -3,7 +3,7 @@ import re
 from typing import Any, Dict, List
 
 from scorer import Scorer
-from lmstudio_control import LmStudioModel
+from lmstudio_model import LmStudioModel
 
 class LmStudioScorer(Scorer):
     def __init__(self, endpoint: str, model: str):

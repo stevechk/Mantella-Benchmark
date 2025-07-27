@@ -11,7 +11,7 @@ from remote_llm_model import RemoteLLMModel
 project_root = str(Path(__file__).parent.parent)
 sys.path.append(project_root)
 
-from lmstudio_control import LmStudioModel
+from lmstudio_model import LmStudioModel
 from function_calling_scorer import FunctionCallingScorer, Scorer
 from utils import Timer
 
@@ -114,6 +114,7 @@ def main():
                             response_text = model.call_with_messages(test_messages)
                         except Exception as e:
                             print(f"Error calling model {model_name}: {e}")
+                            response_text = "Error calling model"
                             continue
                         
                         #ignore thinking part of response for models such as DeepSeek R1

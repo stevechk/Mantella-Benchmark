@@ -158,6 +158,7 @@ class LmStudioModel(BaseLLMModel):
         #call the model using the openapi endpoint
         response = requests.post(
             f"{self.api_endpoint}/v1/chat/completions",
+            timeout=15,
             json={
                 "model": self.model_path,
                 "messages": [{"role": "user", "content": prompt}]
@@ -174,6 +175,7 @@ class LmStudioModel(BaseLLMModel):
         #call the model using the openapi endpoint
         response = requests.post(
             f"{self.api_endpoint}/v1/chat/completions",
+            timeout=15,
             json={
                 "model": self.model_path,
                 "messages": messages_json
